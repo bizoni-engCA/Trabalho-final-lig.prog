@@ -50,10 +50,10 @@ Os testes revelaram uma diferença massiva de desempenho. Enquanto a Lista degra
 *\*Nota: Valores marcados como 0 ns indicam que a operação foi tão rápida que ficou abaixo da resolução mínima do relógio do sistema operacional (< 15ms), comprovando a extrema eficiência das estruturas logarítmicas.*
 
 ### Gráficos
-![Gráfico de Inserção](docs/grafico_insercao.png)
+![Gráfico de Inserção](docs/Lista (ns), Arvore (ns) e Heap (ns).png)
 *Figura 1: Comparativo de Inserção (Recomenda-se escala logarítmica).*
 
-![Gráfico de Busca](docs/grafico_busca.png)
+![Gráfico de Busca](docs/Lista Busca (ns), Arvore Busca (ns) e Heap Busca (ns).png)
 *Figura 2: Comparativo de Busca de Máximo.*
 
 **Análise:** A Lista Encadeada demonstrou crescimento quadrático ($O(N^2)$), tornando-se inviável para $N > 20.000$. A Árvore Rubro-Negra e a Heap mantiveram tempos de resposta virtualmente instantâneos, validando sua aplicabilidade para o cenário proposto pela empresa.
