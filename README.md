@@ -77,9 +77,24 @@ Certifique-se de ter o compilador g++ instalado e configurado no Path.
 2. Execute:
    .\trabalho_final.exe
 
-## 7. Uso de IA generativa
+## 7. Bônus Implementados
+
+### 7.1 Integração com Tinkercad (Simulação de Hardware)
+Para demonstrar a coleta de dados na borda (Edge Computing), foi criada uma simulação no Tinkercad utilizando um Arduino Uno e um sensor de temperatura.
+
+* **Arquitetura:** O Arduino lê o sensor analógico e envia os dados formatados via Serial, simulando a entrada de dados que o programa C++ processaria.
+* **Link para Simulação:** [🟢 Clique aqui para acessar o projeto no Tinkercad](https://www.tinkercad.com/things/2HZfCiHLFXf-dhttblp)
+
+![Preview da Simulação](docs/simulacao_tinkercad.png)
+*(Print da simulação em funcionamento)*
+
+### 7.2 Outros Bônus
+* [x] **Implementar mais de uma estrutura:** Além da Rubro-Negra, foi implementada uma **Max-Heap**.
+* [x] **Análise Experimental:** Uso de cronômetros de alta precisão (`std::chrono::nanoseconds`).
+
+## 8. Uso de IA generativa
     Este README, a estruturação do código e a correção de bugs de compilação foram desenvolvidos com o auxílio do Gemini e do Github Copilot, garantindo conformidade com os requisitos de documentação técnica e boas práticas de C++.
 
-## 8. Referências
+## 9. Referências
     CORMEN, T. H. et al. Introduction to Algorithms.
     Material de aula - Prof. Claudio Miceli (UFRJ).
