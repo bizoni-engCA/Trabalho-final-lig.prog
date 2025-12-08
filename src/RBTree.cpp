@@ -16,7 +16,6 @@ void RBTree::destruirArvore(No* no) {
     delete no;
 }
 
-// *** ROTAÇÃO À ESQUERDA ***
 void RBTree::rotacionarEsquerda(No*& pt) {
     No* pt_direita = pt->direita;
     pt->direita = pt_direita->esquerda;
@@ -37,7 +36,6 @@ void RBTree::rotacionarEsquerda(No*& pt) {
     pt->pai = pt_direita;
 }
 
-// *** ROTAÇÃO À DIREITA ***
 void RBTree::rotacionarDireita(No*& pt) {
     No* pt_esquerda = pt->esquerda;
     pt->esquerda = pt_esquerda->direita;
@@ -58,8 +56,7 @@ void RBTree::rotacionarDireita(No*& pt) {
     pt->pai = pt_esquerda;
 }
 
-// *** BALANCEAMENTO PÓS-INSERÇÃO ***
-void RBTree::balancearInsercao(No*& pt) {
+void RBTree::corrigirInsercao(No*& pt) {
     No* pai_pt = nullptr;
     No* avo_pt = nullptr;
 
@@ -67,47 +64,47 @@ void RBTree::balancearInsercao(No*& pt) {
         pai_pt = pt->pai;
         avo_pt = pt->pai->pai;
 
-        /* Caso A: Pai do pt é filho à esquerda do avô */
+        // Caso A: Pai é filho à esquerda do Avô
         if (pai_pt == avo_pt->esquerda) {
             No* tio_pt = avo_pt->direita;
 
-            /* Caso 1: O tio é vermelho (apenas recolorir) */
+            // Caso 1: Tio é vermelho (Recolorir)
             if (tio_pt != nullptr && tio_pt->cor == VERMELHO) {
                 avo_pt->cor = VERMELHO;
                 pai_pt->cor = PRETO;
                 tio_pt->cor = PRETO;
                 pt = avo_pt;
             } else {
-                /* Caso 2: pt é filho à direita (rotação dupla necessária) */
+                // Caso 2: pt é filho à direita (Rotação Dupla - Parte 1)
                 if (pt == pai_pt->direita) {
                     rotacionarEsquerda(pai_pt);
                     pt = pai_pt;
                     pai_pt = pt->pai;
                 }
-                /* Caso 3: pt é filho à esquerda (rotação simples) */
+                // Caso 3: pt é filho à esquerda (Rotação Simples)
                 rotacionarDireita(avo_pt);
                 std::swap(pai_pt->cor, avo_pt->cor);
                 pt = pai_pt;
             }
         }
-        /* Caso B: Pai do pt é filho à direita do avô */
+        // Caso B: Pai é filho à direita do Avô
         else {
             No* tio_pt = avo_pt->esquerda;
 
-            /* Caso 1: O tio é vermelho (apenas recolorir) */
+            // Caso 1: Tio é vermelho (Recolorir)
             if ((tio_pt != nullptr) && (tio_pt->cor == VERMELHO)) {
                 avo_pt->cor = VERMELHO;
                 pai_pt->cor = PRETO;
                 tio_pt->cor = PRETO;
                 pt = avo_pt;
             } else {
-                /* Caso 2: pt é filho à esquerda (rotação dupla necessária) */
+                // Caso 2: pt é filho à esquerda (Rotação Dupla - Parte 1)
                 if (pt == pai_pt->esquerda) {
                     rotacionarDireita(pai_pt);
                     pt = pai_pt;
                     pai_pt = pt->pai;
                 }
-                /* Caso 3: pt é filho à direita (rotação simples) */
+                // Caso 3: pt é filho à direita (Rotação Simples)
                 rotacionarEsquerda(avo_pt);
                 std::swap(pai_pt->cor, avo_pt->cor);
                 pt = pai_pt;
@@ -117,50 +114,46 @@ void RBTree::balancearInsercao(No*& pt) {
     raiz->cor = PRETO;
 }
 
-// *** INSERÇÃO PÚBLICA ***
 void RBTree::insert(SensorData data) {
     No* novo = new No(data);
-    raiz =  (raiz == nullptr) ? novo : raiz; // Proteção inicial
+    contador++; // Já incrementa o tamanho
+
+    // Inserção padrão de BST
+    if (raiz == nullptr) {
+        novo->cor = PRETO;
+        raiz = novo;
+        return;
+    }
 
     No* Y = nullptr;
     No* X = raiz;
 
-    // Busca a posição (BST normal)
     while (X != nullptr) {
         Y = X;
-        // Usa o operador < que definimos no SensorData
         if (novo->data < X->data)
             X = X->esquerda;
         else
             X = X->direita;
     }
 
-    // Conecta o novo nó
     novo->pai = Y;
-    if (Y == nullptr) {
-        raiz = novo;
-    } else if (novo->data < Y->data) {
+    if (novo->data < Y->data)
         Y->esquerda = novo;
-    } else {
+    else
         Y->direita = novo;
-    }
 
-    // Se for raiz, é preto e acabou
+    // Se inseriu na raiz (impossível cair aqui mas por segurança)
     if (novo->pai == nullptr) {
         novo->cor = PRETO;
-        contador++;
         return;
     }
 
-    // Se o pai for raiz, não precisa balancear
-    if (novo->pai->pai == nullptr) {
-        contador++;
+    // Se o pai é preto, não precisa fazer nada
+    if (novo->pai->pai == nullptr)
         return;
-    }
 
-    // Balanceia a árvore
-    balancearInsercao(novo);
-    contador++;
+    // Corrige a árvore
+    corrigirInsercao(novo);
 }
 
 void RBTree::printSorted() {
@@ -171,29 +164,22 @@ void RBTree::printSorted() {
 void RBTree::percursoEmOrdem(No* no) {
     if (no == nullptr) return;
     percursoEmOrdem(no->esquerda);
-    // Imprime o dado usando a função que criamos no SensorData
-    no->data.print(); 
+    no->data.print();
     percursoEmOrdem(no->direita);
 }
 
 SensorData RBTree::getMin() {
-    if (raiz == nullptr) return {0,0,0};
+    if (raiz == nullptr) return {0,0};
     No* atual = raiz;
-    while (atual->esquerda != nullptr) {
-        atual = atual->esquerda;
-    }
+    while (atual->esquerda != nullptr) atual = atual->esquerda;
     return atual->data;
 }
 
 SensorData RBTree::getMax() {
-    if (raiz == nullptr) return {0,0,0};
+    if (raiz == nullptr) return {0,0};
     No* atual = raiz;
-    while (atual->direita != nullptr) {
-        atual = atual->direita;
-    }
+    while (atual->direita != nullptr) atual = atual->direita;
     return atual->data;
 }
 
-int RBTree::getSize() {
-    return contador;
-}
+int RBTree::getSize() { return contador; }
